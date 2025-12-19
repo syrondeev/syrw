@@ -24,7 +24,8 @@ define('SYRW_PLUGIN_URL', plugin_dir_url(__FILE__));
 /**
  * Main SYRW Elementor Widgets Class
  */
-final class SYRW_Elementor_Widgets {
+final class SYRW_Elementor_Widgets
+{
 
     /**
      * Minimum Elementor Version
@@ -44,7 +45,8 @@ final class SYRW_Elementor_Widgets {
     /**
      * Instance
      */
-    public static function instance() {
+    public static function instance()
+    {
         if (is_null(self::$_instance)) {
             self::$_instance = new self();
         }
@@ -54,14 +56,16 @@ final class SYRW_Elementor_Widgets {
     /**
      * Constructor
      */
-    public function __construct() {
+    public function __construct()
+    {
         add_action('plugins_loaded', [$this, 'init']);
     }
 
     /**
      * Initialize the plugin
      */
-    public function init() {
+    public function init()
+    {
         // Check if Elementor installed and activated
         if (!did_action('elementor/loaded')) {
             add_action('admin_notices', [$this, 'admin_notice_missing_main_plugin']);
@@ -81,15 +85,15 @@ final class SYRW_Elementor_Widgets {
         }
 
         // Load autoloader
-        require_once SYRW_PLUGIN_DIR . 'includes/autoloader.php';
+        require_once SYRW_PLUGIN_DIR . 'vendor/autoload.php';
 
         // Add Plugin actions
         add_action('elementor/widgets/register', [$this, 'register_widgets']);
         add_action('elementor/elements/categories_registered', [$this, 'register_widget_categories']);
-        
+
         // Register widget styles
         add_action('elementor/frontend/after_enqueue_styles', [$this, 'widget_styles']);
-        
+
         // Register widget scripts
         add_action('elementor/frontend/after_register_scripts', [$this, 'widget_scripts']);
 
@@ -100,15 +104,18 @@ final class SYRW_Elementor_Widgets {
     /**
      * Load Textdomain
      */
-    public function i18n() {
+    public function i18n()
+    {
         load_plugin_textdomain('syrw-widgets', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
 
     /**
      * Admin notice - Missing Elementor
      */
-    public function admin_notice_missing_main_plugin() {
-        if (isset($_GET['activate'])) unset($_GET['activate']);
+    public function admin_notice_missing_main_plugin()
+    {
+        if (isset($_GET['activate']))
+            unset($_GET['activate']);
 
         $message = sprintf(
             esc_html__('"%1$s" requires "%2$s" to be installed and activated.', 'syrw-widgets'),
@@ -122,8 +129,10 @@ final class SYRW_Elementor_Widgets {
     /**
      * Admin notice - Minimum Elementor version
      */
-    public function admin_notice_minimum_elementor_version() {
-        if (isset($_GET['activate'])) unset($_GET['activate']);
+    public function admin_notice_minimum_elementor_version()
+    {
+        if (isset($_GET['activate']))
+            unset($_GET['activate']);
 
         $message = sprintf(
             esc_html__('"%1$s" requires "%2$s" version %3$s or greater.', 'syrw-widgets'),
@@ -138,8 +147,10 @@ final class SYRW_Elementor_Widgets {
     /**
      * Admin notice - Minimum PHP version
      */
-    public function admin_notice_minimum_php_version() {
-        if (isset($_GET['activate'])) unset($_GET['activate']);
+    public function admin_notice_minimum_php_version()
+    {
+        if (isset($_GET['activate']))
+            unset($_GET['activate']);
 
         $message = sprintf(
             esc_html__('"%1$s" requires PHP version %2$s or greater.', 'syrw-widgets'),
@@ -153,7 +164,8 @@ final class SYRW_Elementor_Widgets {
     /**
      * Register Widget Categories
      */
-    public function register_widget_categories($elements_manager) {
+    public function register_widget_categories($elements_manager)
+    {
         $elements_manager->add_category(
             'syrw-widgets',
             [
@@ -166,10 +178,11 @@ final class SYRW_Elementor_Widgets {
     /**
      * Register Widgets
      */
-    public function register_widgets($widgets_manager) {
+    public function register_widgets($widgets_manager)
+    {
         // Include widget files
         $widgets_dir = SYRW_PLUGIN_DIR . 'widgets/';
-        
+
         // Array of widgets to load
         $widgets = [
             'post-card/module.php',
@@ -180,7 +193,7 @@ final class SYRW_Elementor_Widgets {
             $widget_path = $widgets_dir . $widget_file;
             if (file_exists($widget_path)) {
                 require_once $widget_path;
-                
+
                 // Get class name from file
                 $class_name = $this->get_widget_class_name($widget_file);
                 if (class_exists($class_name)) {
@@ -193,19 +206,21 @@ final class SYRW_Elementor_Widgets {
     /**
      * Get widget class name from file path
      */
-    private function get_widget_class_name($file_path) {
+    private function get_widget_class_name($file_path)
+    {
         // Extract widget name from path (e.g., 'post-card/module.php' -> 'PostCard')
         $widget_name = dirname($file_path);
         $class_name = str_replace('-', '_', $widget_name);
         $class_name = str_replace(' ', '_', ucwords(str_replace('_', ' ', $class_name)));
-        
+
         return 'SYRW\\Widgets\\' . $class_name . '\\Module';
     }
 
     /**
      * Register Widget Styles
      */
-    public function widget_styles() {
+    public function widget_styles()
+    {
         wp_register_style(
             'syrw-widgets-style',
             SYRW_PLUGIN_URL . 'assets/css/syrw-widgets.css',
@@ -217,7 +232,8 @@ final class SYRW_Elementor_Widgets {
     /**
      * Register Widget Scripts
      */
-    public function widget_scripts() {
+    public function widget_scripts()
+    {
         wp_register_script(
             'syrw-widgets-script',
             SYRW_PLUGIN_URL . 'assets/js/syrw-widgets.js',
