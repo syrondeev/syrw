@@ -6,3 +6,5 @@ node_modules/
 .vscode/
 *.zip
 .env
+sampel-code/
+sampel-widget/
